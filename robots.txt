@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://meowmeowmeow.github.io/my_REPO/sitemap.xml

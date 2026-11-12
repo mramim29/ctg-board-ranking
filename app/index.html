@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSC 2026 Result Ranking — Ctg Board Ranking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #FAFAFA; color: #111111; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Minimalist Loader */
+        .loader { display: inline-block; width: 24px; height: 24px; border: 2px solid #e5e7eb; border-top-color: #111; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Fade in animation */
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-12 text-gray-800 relative">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <header class="mb-6 md:mb-10 mt-2 md:mt-4 flex flex-col items-center relative text-center pt-8 md:pt-0">
+            <a href="../index.html" class="absolute left-0 top-0 md:top-1 text-sm text-gray-400 hover:text-black transition flex items-center gap-1">
+                &larr; Back
+            </a>
+            
+            <div class="flex flex-col md:flex-row items-center gap-2 md:gap-3 mb-1 md:mb-2">
+                <h1 class="text-2xl md:text-3xl font-medium tracking-tight">Chattogram Board <span class="text-gray-400 font-light">Ranking</span></h1>
+                <span class="bg-black text-white px-2 py-0.5 rounded text-[10px] font-semibold tracking-wide uppercase mt-1 md:mt-0">Unofficial</span>
+            </div>
+            
+            <p class="text-sm md:text-base font-medium text-gray-700">HSC 2026 Result Ranking</p>
+            <p class="text-[10px] md:text-xs text-gray-400 mt-1 uppercase tracking-widest">Top 100 Merit List Preview</p>
+        </header>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="text-center py-20 flex flex-col items-center gap-4">
+            <div class="loader"></div>
+            <p class="text-sm text-gray-400">Fetching Top 100 lists...</p>
+        </div>
+
+        <!-- App Content -->
+        <div id="appContent" class="hidden">
+            
+            <!-- Search Bar -->
+            <div class="relative w-full max-w-lg mx-auto mb-6 fade-in">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <input type="text" id="searchInput" placeholder="Search by name, roll, or institute..." class="w-full bg-white border border-gray-200 rounded-full pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all shadow-sm">
+            </div>
+
+            <!-- Tabs (Scrollable on mobile) -->
+            <div class="flex justify-start md:justify-center gap-2 md:gap-4 mb-6 md:mb-8 overflow-x-auto hide-scrollbar px-2 py-1">
+                <button onclick="switchTab('science')" id="tab-science" class="tab-btn whitespace-nowrap px-5 py-2.5 rounded-full text-xs md:text-sm font-medium transition-all bg-black text-white shadow-md">
+                    Science
+                </button>
+                <button onclick="switchTab('business')" id="tab-business" class="tab-btn whitespace-nowrap px-5 py-2.5 rounded-full text-xs md:text-sm font-medium transition-all text-gray-500 hover:text-black hover:bg-gray-100 bg-white border border-gray-200 md:border-transparent">
+                    Business Studies
+                </button>
+                <button onclick="switchTab('humanities')" id="tab-humanities" class="tab-btn whitespace-nowrap px-5 py-2.5 rounded-full text-xs md:text-sm font-medium transition-all text-gray-500 hover:text-black hover:bg-gray-100 bg-white border border-gray-200 md:border-transparent">
+                    Humanities
+                </button>
+            </div>
+
+            <!-- List Container -->
+            <div class="bg-white border border-gray-200/60 rounded-2xl md:rounded-3xl overflow-hidden shadow-sm fade-in">
+                
+                <!-- Desktop Header (Hidden on mobile) -->
+                <div class="hidden md:grid grid-cols-[80px_1fr_100px_100px_250px] gap-4 p-4 border-b border-gray-100 bg-gray-50/50 text-[10px] md:text-xs text-gray-400 font-medium uppercase tracking-widest">
+                    <div class="text-center">Merit</div>
+                    <div>Student Name</div>
+                    <div class="text-center">GPA</div>
+                    <div class="text-center">Marks</div>
+                    <div class="text-right">Institute</div>
+                </div>
+
+                <!-- Data Rows -->
+                <div id="meritListBody" class="divide-y divide-gray-100/60"></div>
+                
+                <!-- Empty Search State -->
+                <div id="emptyState" class="hidden text-center py-12 text-gray-400 text-sm">
+                    No students found matching your search.
+                </div>
+            </div>
+            
+            <!-- Casual Footer Text & Beta Note -->
+            <div class="mt-8 text-center px-4 pb-20">
+                <p class="text-xs md:text-sm text-gray-500 leading-relaxed">
+                    <span class="bg-gray-200 text-gray-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide mr-1">Beta</span> 
+                    This is a beta version. The full board ranking will drop on <strong class="text-black">20 Nov</strong> and will have much more data & features.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollTopBtn" onclick="scrollToTop()" class="fixed bottom-6 right-6 md:bottom-10 md:right-10 bg-black text-white p-3.5 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 z-50 hover:bg-gray-800 hover:-translate-y-1 focus:outline-none flex items-center justify-center">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+    </button>
+
+    <!-- Load the 3 separated files -->
+    <script src="../data/hsc26-science.js"></script>
+    <script src="../data/hsc26-business-studies.js"></script>
+    <script src="../data/hsc26-humanities.js"></script>
+
+    <script>function _0x26dd(){const _0x5a7226=['</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22md:hidden\x20text-xs\x20text-gray-400\x20leading-tight\x22>','25295sMVLes','scrollTo','32AsLotp','26LEfkNj','3046977AJuLRA','opacity-100','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<!--\x20Name\x20&\x20Details\x20(Mobile)\x20-->\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22flex-1\x20px-4\x20md:px-0\x20md:order-2\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22font-medium\x20text-gray-900\x20leading-tight\x20mb-1\x22>','20lNRchl','emptyState','122716qqbKIE','business','96pGezoU','6666876DevuEL','classList','length','concat','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22flex\x20flex-col\x20md:grid\x20md:grid-cols-[80px_1fr_100px_100px_250px]\x20md:gap-4\x20p-4\x20hover:bg-gray-50/50\x20transition-colors\x20group\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<!--\x20MOBILE:\x20Top\x20Row\x20(Rank\x20+\x20Name\x20+\x20Stats)\x20-->\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22flex\x20items-start\x20justify-between\x20w-full\x20md:contents\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<!--\x20Rank\x20-->\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22md:text-center\x20md:mt-1\x20shrink-0\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','<span\x20class=\x22inline-flex\x20items-center\x20justify-center\x20bg-gray-100\x20text-gray-600\x20font-bold\x20w-7\x20h-7\x20rounded-lg\x20text-xs\x22>','246KJlpUi','opacity-0','hidden','includes','tab-','meritListBody','scrollY','forEach','science','pointer-events-auto','.tab-btn','getElementById','map','scroll','<span\x20class=\x22text-gray-400\x20font-mono\x20text-sm\x22>','undefined','tab-btn\x20whitespace-nowrap\x20px-5\x20py-2.5\x20rounded-full\x20text-xs\x20md:text-sm\x20font-medium\x20transition-all\x20bg-black\x20text-white\x20shadow-md','contextmenu','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22bg-red-50\x20border\x20border-red-100\x20text-red-600\x20px-6\x20py-4\x20rounded-xl\x20text-sm\x20max-w-md\x20mx-auto\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<strong>Data\x20NOT\x20FOUND</strong><br>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20The\x20ranking\x20data\x20files\x20could\x20not\x20be\x20loaded.\x20Check\x20back\x20later.\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','error','</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<!--\x20DESKTOP\x20ONLY:\x20Institute\x20-->\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22hidden\x20md:block\x20md:order-5\x20text-right\x20text-xs\x20text-gray-400\x20leading-relaxed\x20mt-1\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','className','input','<span\x20class=\x22inline-flex\x20items-center\x20justify-center\x20bg-gray-900\x20text-white\x20font-bold\x20w-7\x20h-7\x20rounded-lg\x20text-xs\x22>','loadingState','smooth','toLowerCase','</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22md:hidden\x20text-[11px]\x20text-gray-400\x20font-mono\x20mb-0.5\x22>Roll:\x20','trim','</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<!--\x20Stats\x20(Mobile)\x20-->\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22flex\x20flex-row\x20md:contents\x20items-center\x20gap-4\x20md:gap-0\x20shrink-0\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22text-center\x20md:order-3\x20w-10\x20md:w-auto\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22md:hidden\x20text-[10px]\x20text-gray-400\x20uppercase\x20tracking-wider\x20mb-0.5\x22>GPA</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22font-medium\x20text-gray-900\x20md:text-center\x22>','target','<span\x20class=\x22inline-flex\x20items-center\x20justify-center\x20bg-gray-200\x20text-gray-800\x20font-bold\x20w-7\x20h-7\x20rounded-lg\x20text-xs\x22>','searchInput','tab-btn\x20whitespace-nowrap\x20px-5\x20py-2.5\x20rounded-full\x20text-xs\x20md:text-sm\x20font-medium\x20transition-all\x20text-gray-500\x20hover:text-black\x20hover:bg-gray-100\x20bg-white\x20border\x20border-gray-200\x20md:border-transparent','addEventListener','join','filter','350147rrXbyw','</span>','69491DPZSrF','remove','</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22text-center\x20md:order-4\x20w-12\x20md:w-auto\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22md:hidden\x20text-[10px]\x20text-gray-400\x20uppercase\x20tracking-wider\x20mb-0.5\x22>Marks</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22font-medium\x20text-gray-900\x20md:text-center\x22>','querySelectorAll','67143PMqSfW','add','pointer-events-none','scrollTopBtn','value'];_0x26dd=function(){return _0x5a7226;};return _0x26dd();}const _0x4e8138=_0x4c0c;(function(_0x90716d,_0x25533d){const _0x2d8273=_0x4c0c,_0x23dc04=_0x90716d();while(!![]){try{const _0x302736=parseInt(_0x2d8273(0xf5))/0x1*(parseInt(_0x2d8273(0x102))/0x2)+-parseInt(_0x2d8273(0xf9))/0x3*(-parseInt(_0x2d8273(0x101))/0x4)+parseInt(_0x2d8273(0xff))/0x5*(parseInt(_0x2d8273(0x111))/0x6)+-parseInt(_0x2d8273(0xf3))/0x7*(parseInt(_0x2d8273(0x10a))/0x8)+parseInt(_0x2d8273(0x103))/0x9+parseInt(_0x2d8273(0x106))/0xa*(parseInt(_0x2d8273(0x108))/0xb)+-parseInt(_0x2d8273(0x10b))/0xc;if(_0x302736===_0x25533d)break;else _0x23dc04['push'](_0x23dc04['shift']());}catch(_0x1b9046){_0x23dc04['push'](_0x23dc04['shift']());}}}(_0x26dd,0x78d2a),document[_0x4e8138(0xf0)](_0x4e8138(0xde),_0x1f153f=>_0x1f153f['preventDefault']()));function decodeData(_0x3ef020){const _0x30fa6b=_0x4e8138;try{return JSON['parse'](atob(_0x3ef020));}catch(_0x4f51dd){return console[_0x30fa6b(0xe1)]('Data\x20decoding\x20failed.\x20Check\x20if\x20data\x20is\x20properly\x20encoded.'),[];}}const DATABASE={'science':typeof HSC26_SCIENCE_DATA!==_0x4e8138(0xdc)?decodeData(HSC26_SCIENCE_DATA):[],'business':typeof HSC26_BUSINESS_DATA!==_0x4e8138(0xdc)?decodeData(HSC26_BUSINESS_DATA):[],'humanities':typeof HSC26_HUMANITIES_DATA!=='undefined'?decodeData(HSC26_HUMANITIES_DATA):[]};let currentGroup='science',searchQuery='';function init(){const _0x42e69f=_0x4e8138;if(DATABASE[_0x42e69f(0x119)]['length']===0x0&&DATABASE[_0x42e69f(0x109)][_0x42e69f(0x10d)]===0x0){document[_0x42e69f(0xd8)](_0x42e69f(0xe6))['innerHTML']=_0x42e69f(0xe0);return;}document['getElementById'](_0x42e69f(0xe6))[_0x42e69f(0x10c)][_0x42e69f(0xfa)](_0x42e69f(0x113)),document[_0x42e69f(0xd8)]('appContent')[_0x42e69f(0x10c)][_0x42e69f(0xf6)](_0x42e69f(0x113)),renderList();}function switchTab(_0x1dc2c2){const _0x28157a=_0x4e8138;currentGroup=_0x1dc2c2,document[_0x28157a(0xf8)](_0x28157a(0xd7))[_0x28157a(0x118)](_0x3182a3=>{const _0x29f1c8=_0x28157a;_0x3182a3['className']=_0x29f1c8(0xef);}),document['getElementById'](_0x28157a(0x115)[_0x28157a(0x10e)](_0x1dc2c2))[_0x28157a(0xe3)]=_0x28157a(0xdd),renderList();}function renderList(){const _0x4d6feb=_0x4e8138,_0x3e1f84=document[_0x4d6feb(0xd8)](_0x4d6feb(0x116)),_0x49fc11=document[_0x4d6feb(0xd8)](_0x4d6feb(0x107));let _0x10badf=DATABASE[currentGroup]||[];if(searchQuery){const _0x46e67f=searchQuery['toLowerCase']();_0x10badf=_0x10badf[_0x4d6feb(0xf2)](_0x33d2eb=>_0x33d2eb['n'][_0x4d6feb(0xe8)]()['includes'](_0x46e67f)||_0x33d2eb['r']['includes'](_0x46e67f)||_0x33d2eb['i']['toLowerCase']()[_0x4d6feb(0x114)](_0x46e67f));}if(_0x10badf[_0x4d6feb(0x10d)]===0x0){_0x3e1f84['innerHTML']='',_0x49fc11[_0x4d6feb(0x10c)][_0x4d6feb(0xf6)](_0x4d6feb(0x113));return;}else _0x49fc11[_0x4d6feb(0x10c)][_0x4d6feb(0xfa)](_0x4d6feb(0x113));_0x3e1f84['innerHTML']=_0x10badf[_0x4d6feb(0xd9)]((_0x25ec14,_0x2ce2db)=>{const _0x31c9b8=_0x4d6feb,_0x374d20=_0x2ce2db+0x1;let _0xb01bdc=_0x31c9b8(0xdb)[_0x31c9b8(0x10e)](_0x374d20,'</span>');if(_0x374d20===0x1)_0xb01bdc=_0x31c9b8(0xe5)[_0x31c9b8(0x10e)](_0x374d20,_0x31c9b8(0xf4));if(_0x374d20===0x2)_0xb01bdc=_0x31c9b8(0xed)[_0x31c9b8(0x10e)](_0x374d20,_0x31c9b8(0xf4));if(_0x374d20===0x3)_0xb01bdc=_0x31c9b8(0x110)[_0x31c9b8(0x10e)](_0x374d20,_0x31c9b8(0xf4));return _0x31c9b8(0x10f)['concat'](_0xb01bdc,_0x31c9b8(0x105))[_0x31c9b8(0x10e)](_0x25ec14['n'],_0x31c9b8(0xe9))[_0x31c9b8(0x10e)](_0x25ec14['r'],_0x31c9b8(0xfe))['concat'](_0x25ec14['i'],_0x31c9b8(0xeb))[_0x31c9b8(0x10e)](_0x25ec14['g'],_0x31c9b8(0xf7))['concat'](_0x25ec14['m'],_0x31c9b8(0xe2))['concat'](_0x25ec14['i'],_0x31c9b8(0xdf));})[_0x4d6feb(0xf1)]('');}window['addEventListener'](_0x4e8138(0xda),()=>{const _0x52be13=_0x4e8138,_0x3e7c44=document['getElementById'](_0x52be13(0xfc));window[_0x52be13(0x117)]>0x12c?(_0x3e7c44[_0x52be13(0x10c)][_0x52be13(0xf6)](_0x52be13(0x112),_0x52be13(0xfb)),_0x3e7c44[_0x52be13(0x10c)][_0x52be13(0xfa)]('opacity-100',_0x52be13(0xd6))):(_0x3e7c44[_0x52be13(0x10c)]['add'](_0x52be13(0x112),'pointer-events-none'),_0x3e7c44[_0x52be13(0x10c)]['remove'](_0x52be13(0x104),'pointer-events-auto'));});function scrollToTop(){const _0x2ebde2=_0x4e8138;window[_0x2ebde2(0x100)]({'top':0x0,'behavior':_0x2ebde2(0xe7)});}function _0x4c0c(_0x1d5660,_0x38daa0){_0x1d5660=_0x1d5660-0xd6;const _0x26dddc=_0x26dd();let _0x4c0c9f=_0x26dddc[_0x1d5660];return _0x4c0c9f;}document[_0x4e8138(0xd8)](_0x4e8138(0xee))[_0x4e8138(0xf0)](_0x4e8138(0xe4),_0x376647=>{const _0x321e4d=_0x4e8138;searchQuery=_0x376647[_0x321e4d(0xec)][_0x321e4d(0xfd)][_0x321e4d(0xea)](),renderList();}),init();
+    </script>
+</body>
+</html>
