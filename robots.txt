@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://meowmeowmeow.github.io/my_REPO/sitemap.xml
+Sitemap: https://mramim29.github.io/ctg-board-ranking/sitemap.xml
